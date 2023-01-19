@@ -1,3 +1,8 @@
+local ContextActionService = game:GetService('ContextActionService')
+
+local Players = game:GetService('Players')
+local LocalPlayer = Players.LocalPlayer
+local LocalMouse = LocalPlayer:GetMouse()
 
 local ReplicatedStorage = game:GetService('ReplicatedStorage')
 local ReplicatedModules = require(ReplicatedStorage:WaitForChild('Modules'))
@@ -8,6 +13,10 @@ local Knit = require(ReplicatedStorage.Knit)
 local PingObjectController = Knit.CreateController { Name = "PingObjectController" }
 
 local PingObjectService = false
+local CurrentCamera = workspace.CurrentCamera
+
+local PingRaycastParams = RaycastParams.new()
+PingRaycastParams.FilterType = Enum.RaycastFilterType.Whitelist
 
 function PingObjectController:ClearPing( Reference )
 
@@ -86,25 +95,27 @@ end
 
 function PingObjectController:KnitStart()
 
-	--[[
-		raycastParams.FilterDescendantsInstances = { workspace:WaitForChild('Doors') }
+	-- objects that can be pinged
+	PingRaycastParams.FilterDescendantsInstances = { }
 
-		local Counter = 0
-		ContextActionService:BindAction('MiddleClickPing', function(actionName, inputState, inputObject)
-			if actionName == 'MiddleClickPing' and inputState == Enum.UserInputState.Begin then
-				local viewportRay = CurrentCamera:ViewportPointToRay( LocalMouse.X, LocalMouse.Y + 35 )
-				local raycastResult = workspace:Raycast( viewportRay.Origin, viewportRay.Direction * 200 )
-				Counter += 1
-				if raycastResult and PingObjectController:IsPingable( raycastResult.Instance ) then
-					Counter = 0
-					PingObjectController:TryPingInstance( raycastResult.Instance, raycastResult.Position )
-				elseif Counter >= 3 then
-					Counter = 0
-					PingObjectService.pingObject:Fire()
-				end
+	local PingCounter = 0
+	ContextActionService:BindAction('MiddleClickPing', function(actionName, inputState, _)
+		if actionName == 'MiddleClickPing' and inputState == Enum.UserInputState.Begin then
+			local viewportRay = CurrentCamera:ViewportPointToRay( LocalMouse.X, LocalMouse.Y + 35 )
+			local raycastResult = workspace:Raycast( viewportRay.Origin, viewportRay.Direction * 200 )
+
+			PingCounter += 1
+			if raycastResult and PingObjectController:IsPingable( raycastResult.Instance ) then
+				PingCounter = 0
+				PingObjectController:AttemptPing( raycastResult.Instance, raycastResult.Position )
+			elseif PingCounter >= 3 then
+				PingCounter = 0
+				PingObjectService.CreatePing:Fire()
 			end
-		end, false, Enum.UserInputType.MouseButton3)
+		end
+	end, false, Enum.UserInputType.MouseButton3)
 
+	--[[
 		RunService.Heartbeat:Connect(function()
 			local PrimaryPart = LocalPlayer.Character and LocalPlayer.Character.PrimaryPart
 			if not PrimaryPart then

@@ -5,10 +5,7 @@ local ReplicatedModules = require(ReplicatedStorage:WaitForChild('Modules'))
 local PingConfigModule = ReplicatedModules.Defined.PingConfig
 
 local Knit = require(ReplicatedStorage.Knit)
-local PingObjectService = Knit.CreateService {
-	Name = "PingObjectService",
-	Client = {},
-}
+local PingObjectService = Knit.CreateService { Name = "PingObjectService", Client = {}, }
 
 PingObjectService.Client.CreatePing = Knit.CreateSignal()
 PingObjectService.Client.RemovePing = Knit.CreateSignal()
@@ -36,13 +33,14 @@ function PingObjectService:HandleIncomingPing( LocalPlayer, Reference, Position 
 end
 
 function PingObjectService:KnitStart()
+	print(script.Name, 'Start')
 	PingObjectService.Client.CreatePing:Connect(function(LocalPlayer, Reference, Position)
 		PingObjectService:HandleIncomingPing( LocalPlayer, Reference, Position )
 	end)
 end
 
 function PingObjectService:KnitInit()
-
+	print(script.Name, 'Init')
 end
 
 return PingObjectService

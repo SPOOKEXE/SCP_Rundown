@@ -2,8 +2,7 @@
 local Module = {}
 
 Module.Scans = {
-	{
-		ID = 'ClassX',
+	ClassX = {
 		EnemiesPerWave = 12, -- incrementing count per wave; { 5, 7, 9, 11, 13, 15 }
 		WaveInterval = 20, -- decrementing count per wave; { 20, 19, 18, 17 }
 		ScanTypes = {
@@ -14,8 +13,8 @@ Module.Scans = {
 			--{ {ID = 'LargeScanCircle', NodeCount = 2}, {ID = 'TeamScan', NodeCount = 2, LoseOvertime = true} },
 		},
 	},
-	{
-		ID = 'ClassIII',
+
+	ClassIII = {
 		EnemiesPerWave = 12, -- incrementing count per wave; { 5, 7, 9, 11, 13, 15 }
 		WaveInterval = 20, -- decrementing count per wave; { 20, 19, 18, 17 }
 		ScanTypes = {
@@ -24,8 +23,8 @@ Module.Scans = {
 			{ {ID = 'ScanCircle', NodeCount = 3} },
 		},
 	},
-	{
-		ID = 'CheckpointScan',
+
+	Checkpoint = {
 		EnemiesPerWave = false,
 		WaveInterval = false,
 		TriggerCheckpointSave = true,
@@ -35,13 +34,8 @@ Module.Scans = {
 	}
 }
 
-function Module:GetScanFromID( scanID )
-	for _, scanData in ipairs( Module.Scans ) do
-		if scanData.ID == scanID then
-			return scanData
-		end
-	end
-	return nil
+function Module:GetScanFromID( ID )
+	return Module.Scans[ ID ]
 end
 
 return Module

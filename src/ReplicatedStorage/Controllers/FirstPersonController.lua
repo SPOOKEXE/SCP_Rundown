@@ -8,8 +8,8 @@ local LocalPlayer = Players.LocalPlayer
 local LocalModules = require(LocalPlayer:WaitForChild('PlayerScripts'):WaitForChild('Modules'))
 
 local ReplicatedStorage = game:GetService('ReplicatedStorage')
-local ReplicatedAssets = ReplicatedStorage:WaitForChild('Assets')
-local ReplicatedModules = require(ReplicatedStorage:WaitForChild('Modules'))
+--local ReplicatedAssets = ReplicatedStorage:WaitForChild('Assets')
+--local ReplicatedModules = require(ReplicatedStorage:WaitForChild('Modules'))
 
 local Knit = require(ReplicatedStorage.Packages.Knit)
 local FirstPersonController = Knit.CreateController { Name = "FirstPersonController" }
@@ -45,9 +45,9 @@ function FirstPersonController:SetCameraLockedState( forceLocked )
 end
 
 function FirstPersonController:GetPlatform()
-	if (GuiService:IsTenFootInterface() or UserInputService.GamepadEnabled) then
+	if GuiService:IsTenFootInterface() or UserInputService.GamepadEnabled then
 		return "Console"
-	elseif (UserInputService.TouchEnabled and not UserInputService.MouseEnabled) then
+	elseif UserInputService.TouchEnabled and not UserInputService.MouseEnabled then
 		return "Mobile"
 	end
 	return "Desktop"
@@ -57,8 +57,9 @@ function FirstPersonController:SetupControls()
 	local Platform = FirstPersonController:GetPlatform()
 	print('Setup Controls; ', Platform)
 	if Platform == 'Desktop' then
+
 		-- Hold key down to unlock mouse
-		ContextActionService:BindAction(StateActionName, function(actionName, inputState, inputObject)
+		ContextActionService:BindAction(StateActionName, function(actionName, inputState, _)
 			--print(StateActionName)
 			if actionName == StateActionName then
 				if FirstPersonController.IsHoldUnlock then
@@ -68,22 +69,27 @@ function FirstPersonController:SetupControls()
 				end
 			end
 		end, false, Enum.KeyCode.X)
+
 	elseif Platform == 'Console' then
+
 		-- Press ButtonY to flip the unlocked state of the mouse
-		ContextActionService:BindAction(StateActionName, function(actionName, inputState, inputObject)
+		ContextActionService:BindAction(StateActionName, function(actionName, inputState, _)
 			--print(StateActionName)
 			if actionName == StateActionName and inputState == Enum.UserInputState.Begin then
 				FirstPersonController:SetCameraLockedState()
 			end
 		end, false, Enum.KeyCode.ButtonY)
+
 	else
+
 		-- Press the button to flip the unlocked state of the mouse
-		ContextActionService:BindAction(StateActionName, function(actionName, inputState, inputObject)
+		ContextActionService:BindAction(StateActionName, function(actionName, inputState, _)
 			--print(StateActionName)
 			if actionName == StateActionName and inputState == Enum.UserInputState.Begin then
 				FirstPersonController:SetCameraLockedState()
 			end
 		end, false)
+
 		ContextActionService:SetDescription(StateActionName, 'Holding X will unlock the mouse ingame so you can move it around.')
 		ContextActionService:SetImage(StateActionName, 'rbxassetid://9653661214')
 		ContextActionService:SetPosition(StateActionName, UDim2.fromOffset(0, 0))

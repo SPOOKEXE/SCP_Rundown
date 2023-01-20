@@ -94,6 +94,7 @@ function PingObjectController:AttemptPing( Object, Position )
 end
 
 function PingObjectController:KnitStart()
+	print(script.Name, 'Init')
 
 	-- objects that can be pinged
 	PingRaycastParams.FilterDescendantsInstances = { }
@@ -135,6 +136,7 @@ function PingObjectController:KnitStart()
 end
 
 function PingObjectController:KnitInit()
+	print(script.Name, 'Start')
 
 	PingObjectService = Knit.GetService('PingObjectService')
 
@@ -147,7 +149,6 @@ function PingObjectController:KnitInit()
 	end)
 
 	warn('Fix Middle Click Ping System (sometimes awkward to use)')
-
 end
 
 return PingObjectController
